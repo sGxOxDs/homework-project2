@@ -2,22 +2,28 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <iomanip>
 
 using namespace std;
 
-vector<string> output;
+void outputallentry();
+
+//vector<string> output;
 vector<string> jumplist;
 
 struct Entry
 {
-	int count;
-	int bc2[4];
+	int history = 0;
+	int bc2[4] = { 0 };
 };
 vector<Entry> entries;
 
+//pc
+int pc = 0;
+
 //register
 int reg[32] = { 0 };
-
+/*
 //binaryÂà´«¾¹ intÂàstring
 string binary(long long n, int bits, bool sign = false)
 {
@@ -41,14 +47,15 @@ string binary(long long n, int bits, bool sign = false)
 	reverse(a.begin(), a.end());
 	return a;
 }
-
-long long label(vector<string>& jumplist, string temp, int pc)
+*/
+int label(string temp)
 {
 	for (int i = 0; i < jumplist.size(); i++)
 		if (jumplist[i] == temp)
-			return (i - pc) * 4;
+			return i;
+	return -1;
 }
-
+/*
 string type_i_offset(stringstream& ss, string opcode, string f3)
 {
 	string temp, rd, rs1, imm;
@@ -189,12 +196,188 @@ string type_r(stringstream& ss, string opcode, string f3, string f2, string f5)
 	}
 	return f5 + f2 + rs2 + rs1 + f3 + rd + opcode;
 }
+*/
+void history_predictor(bool taken)
+{
+	int this_entry = pc % entries.size();
+	entries[this_entry].history = ((entries[this_entry].history << 1) & 3);
+
+	if (taken)
+		entries[this_entry].history++;
+}
+
+bool guess_predictor()
+{
+	int this_entry = pc % entries.size();
+
+	bool guess = (entries[this_entry].bc2[entries[this_entry].history] >= 2);
+	return guess;
+}
+
+void edit_predictor(bool taken)
+{
+	int this_entry = pc % entries.size();
+	int this_history = entries[this_entry].history;
+	
+	bool guess = (entries[this_entry].bc2[this_history] >= 2);
+
+	if ((guess == taken))
+	{
+		if (entries[this_entry].bc2[this_history] == 2)
+			entries[this_entry].bc2[this_history] = 3;
+		else if (entries[this_entry].bc2[this_history] == 1)
+			entries[this_entry].bc2[this_history] = 0;
+	}
+	else
+	{
+		if (guess)
+			entries[this_entry].bc2[this_history]--;
+		else
+			entries[this_entry].bc2[this_history]++;
+	}
+
+	//cout << "line:" << pc << "\tguess: " << ((guess) ? "T" : "N") << "\tfact: " << ((taken) ? "T" : "N") << endl;
+	//outputallentry();
+}
+
+void li(stringstream& ss)
+{
+	string temp, rd, imm;
+	ss >> temp;
+
+	getline(ss, temp, ',');
+	temp.erase(temp.find_first_of('R'), 1);
+	rd = temp;
+
+	ss >> temp;
+	imm = temp;
+
+	reg[atoi(rd.c_str())] = atoi(imm.c_str());
+}
+
+void addi(stringstream& ss)
+{
+	string temp, rd, rs1, imm;
+	ss >> temp;
+
+	getline(ss, temp, ',');
+	temp.erase(temp.find_first_of('R'), 1);
+	rd = temp;
+
+	getline(ss, temp, ',');
+	temp.erase(temp.find_first_of('R'), 1);
+	rs1 = temp;
+
+	ss >> temp;
+	imm = temp;
+
+	reg[atoi(rd.c_str())] = reg[atoi(rs1.c_str())] + atoi(imm.c_str());
+}
+
+void andi(stringstream& ss)
+{
+	string temp, rd, rs1, imm;
+	ss >> temp;
+
+	getline(ss, temp, ',');
+	temp.erase(temp.find_first_of('R'), 1);
+	temp.erase(temp.find_first_of(' '), 1);
+	rd = temp;
+
+	getline(ss, temp, ',');
+	temp.erase(temp.find_first_of('R'), 1);
+	rs1 = temp;
+
+	ss >> temp;
+	imm = temp;
+	reg[atoi(rd.c_str())] = reg[atoi(rs1.c_str())] & atoi(imm.c_str());
+}
+
+void add(stringstream& ss)
+{
+	string temp, rd, rs1, rs2;
+	ss >> temp;
+
+	getline(ss, temp, ',');
+	temp.erase(temp.find_first_of('R'), 1);
+	rd = temp;
+
+	getline(ss, temp, ',');
+	temp.erase(temp.find_first_of('R'), 1);
+	rs1 = temp;
+
+	ss >> temp;
+	temp.erase(temp.find_first_of('R'), 1);
+	rs2 = temp;
+
+	reg[atoi(rd.c_str())] = reg[atoi(rs1.c_str())] + reg[atoi(rs2.c_str())];
+}
+
+void beq(stringstream& ss)
+{
+	string temp, rs1, rs2;
+	ss >> temp;
+
+	getline(ss, temp, ',');
+	temp.erase(temp.find_first_of('R'), 1);
+	rs1 = temp;
+
+	getline(ss, temp, ',');
+	temp.erase(temp.find_first_of('R'), 1);
+	rs2 = temp;
+
+	ss >> temp;
+
+	bool taken = reg[atoi(rs1.c_str())] == reg[atoi(rs2.c_str())];
+	cout << "\tfact:" << ((taken) ? "T" : "N") << endl;
+	edit_predictor(taken);
+	history_predictor(taken);
+	if (taken)
+	{
+		pc = label(temp);
+		pc--;
+	}
+}
+
+void bne(stringstream& ss)
+{
+	string temp, rs1, rs2;
+	ss >> temp;
+
+	getline(ss, temp, ',');
+	temp.erase(temp.find_first_of('R'), 1);
+	rs1 = temp;
+
+	getline(ss, temp, ',');
+	temp.erase(temp.find_first_of('R'), 1);
+	rs2 = temp;
+
+	ss >> temp;
+
+	bool taken = reg[atoi(rs1.c_str())] != reg[atoi(rs2.c_str())];
+	cout << "\tfact:" << ((taken) ? "T" : "N") << endl;
+	edit_predictor(taken);
+	history_predictor(taken);
+	if (taken)
+	{
+		pc = label(temp);
+		pc--;
+	}
+}
 
 void outputallentry()
 {
 	for (int i = 0; i < entries.size(); i++)
 	{
-		cout << "entries[" << i << "] = (" << entries[i].count;
+		cout << "entries[" << i << "] = (";
+		if (entries[i].history == 0)
+			cout << "00";
+		else if (entries[i].history == 1)
+			cout << "01";
+		else if (entries[i].history == 2)
+			cout << "10";
+		else if (entries[i].history == 3)
+			cout << "11";
 		for (int j = 0; j < 4; j++)
 		{
 			cout << ", ";
@@ -209,9 +392,10 @@ void outputallentry()
 		}
 		cout << ")" << endl;
 	}
+	cout << endl;
 }
 
-void main()
+int main()
 {
 	string tempin;
 	vector<string> input;
@@ -226,13 +410,14 @@ void main()
 		input.push_back(tempin);
 	}
 
-	output.resize(input.size());
+	//output.resize(input.size());
 	jumplist.resize(input.size());
 
 	//jump label
 	for (int i = 0; i < input.size(); i++)
 	{
-		string opcode, rd, rs1, rs2, imm, f3, f2, f5, temp, c_input;
+		//string opcode, rd, rs1, rs2, imm, f3, f2, f5;
+		string temp, c_input;
 		stringstream ss;
 		c_input = input[i];
 		ss << c_input;
@@ -245,18 +430,52 @@ void main()
 		}
 	}
 
-	for (int i = 0; i < input.size(); i++)
+	for (int i = 0; i < input.size(); i = ++pc)
 	{
 		string opcode, rd, rs1, rs2, imm, f3, f2, f5, temp, c_input;
 		stringstream ss;
 		c_input = input[i];
 		ss << c_input;
+		
+		cout << "line:" << pc << "\tentry:" << pc % entries.size() << "\tguess:" << ((guess_predictor()) ? "T" : "N");
 
 		if (c_input.find(":") != -1)
 			ss >> temp;
-
+		//li
+		if (c_input.find("li") != -1)
+		{
+			li(ss);
+		}
+		else if (c_input.find("addi") != -1)
+		{
+			addi(ss);
+		}
+		else if (c_input.find("add") != -1)
+		{
+			add(ss);
+		}
+		else if (c_input.find("beq") != -1)
+		{
+			beq(ss);
+			outputallentry();
+			continue;
+		}
+		else if (c_input.find("bne") != -1)
+		{
+			bne(ss);
+			outputallentry();
+			continue;
+		}
+		else if (c_input.find("andi") != -1)
+		{
+			andi(ss);
+		}
+		history_predictor(false);
+		cout << "\tnot branch!" << endl;
+		outputallentry();
+		/*
 		//type_i_offset
-		if (c_input.find("lb") != -1 || c_input.find("lh") != -1 || c_input.find("lw") != -1)
+		else if (c_input.find("lb") != -1 || c_input.find("lh") != -1 || c_input.find("lw") != -1)
 		{
 			opcode = "0000011";
 
@@ -365,15 +584,14 @@ void main()
 
 			//output[i] = imm1 + " " + rs2 + " " + rs1 + " " + f3 + " " + imm2 + " " + opcode;
 			//output[i] = type_sb(ss, opcode, f3, i);
-		}
-		outputallentry();
-		system("pause");
+		}*/
+		//system("pause");
 	}
 	/*for (int i = 0; i < output.size(); i++)
 	{
 		cout << output[i] << endl;
 	}*/
-
+	return 0;
 }
 
 /*add x2,x2,x23
@@ -382,3 +600,30 @@ L2: sw x1,0(x2)
 beq x0,x0,L1
 L1: add x2,x2,x23
 beq x0,x0,L2*/
+
+/* Aª©
+li R1,0
+li R2,4
+Loop: beq R1,R2,End
+addi R2,R2,-1
+beq R0,R0,Loop
+End:
+*/
+
+/* Bª©
+li R2,0
+li R3,16
+li R4,0
+LoopI: beq R4,R3,EndLoopI
+li R5,0
+LoopJ: beq R5,R3,EndLoopJ
+add R6,R5,R4
+andi R6,R6,3
+bne R6,R0,Endif
+add R2,R2,R5
+Endif: addi R5,R5,1
+beq R0,R0,LoopJ
+EndLoopJ: addi R4,R4,1
+beq R0,R0,LoopI
+EndLoopI:
+*/

@@ -1,0 +1,6 @@
+﻿  main.cpp
+C:\Users\USER\Desktop\Github\homework-project2\Project2\Project2\main.cpp(53,20): warning C4018: '<': signed/unsigned 不相符
+C:\Users\USER\Desktop\Github\homework-project2\Project2\Project2\main.cpp(370,20): warning C4018: '<': signed/unsigned 不相符
+C:\Users\USER\Desktop\Github\homework-project2\Project2\Project2\main.cpp(417,20): warning C4018: '<': signed/unsigned 不相符
+C:\Users\USER\Desktop\Github\homework-project2\Project2\Project2\main.cpp(433,20): warning C4018: '<': signed/unsigned 不相符
+  Project2.vcxproj -> C:\Users\USER\Desktop\Github\homework-project2\Project2\Debug\Project2.exe
