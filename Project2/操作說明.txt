@@ -1,0 +1,15 @@
+先輸入entry的數量
+再輸入RISC-V組語的code
+以enter為換行
+以ctrl+Z為結束輸入
+結束輸入才會得到輸出(輸出量可能很多 CMD不能完整顯示)
+
+在一行code開頭 輸入 "範例字串:" 或 "test:" 後接一個空白
+作為branch的標籤 (可選)
+再接RISC-V的指令
+用一個空白分開指令與參數
+參數與參數間用 "," 分開
+"指令 rd,rs1,rs2"
+"指令 rd,rs1,imm"
+
+僅完成li addi add beq bne andi等inst.

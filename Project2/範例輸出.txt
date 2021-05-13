@@ -1,0 +1,101 @@
+line:0  entry:0 guess:N not branch!
+entries[0] = (00, SN, SN, SN, SN)
+entries[1] = (00, SN, SN, SN, SN)
+entries[2] = (00, SN, SN, SN, SN)
+entries[3] = (00, SN, SN, SN, SN)
+
+line:1  entry:1 guess:N not branch!
+entries[0] = (00, SN, SN, SN, SN)
+entries[1] = (00, SN, SN, SN, SN)
+entries[2] = (00, SN, SN, SN, SN)
+entries[3] = (00, SN, SN, SN, SN)
+
+line:2  entry:2 guess:N not branch!
+entries[0] = (00, SN, SN, SN, SN)
+entries[1] = (00, SN, SN, SN, SN)
+entries[2] = (00, SN, SN, SN, SN)
+entries[3] = (00, SN, SN, SN, SN)
+
+line:3  entry:3 guess:N fact:N
+entries[0] = (00, SN, SN, SN, SN)
+entries[1] = (00, SN, SN, SN, SN)
+entries[2] = (00, SN, SN, SN, SN)
+entries[3] = (00, SN, SN, SN, SN)
+
+line:4  entry:0 guess:N not branch!
+entries[0] = (00, SN, SN, SN, SN)
+entries[1] = (00, SN, SN, SN, SN)
+entries[2] = (00, SN, SN, SN, SN)
+entries[3] = (00, SN, SN, SN, SN)
+
+line:5  entry:1 guess:N fact:T
+entries[0] = (00, SN, SN, SN, SN)
+entries[1] = (01, WN, SN, SN, SN)
+entries[2] = (00, SN, SN, SN, SN)
+entries[3] = (00, SN, SN, SN, SN)
+
+line:3  entry:3 guess:N fact:N
+entries[0] = (00, SN, SN, SN, SN)
+entries[1] = (01, WN, SN, SN, SN)
+entries[2] = (00, SN, SN, SN, SN)
+entries[3] = (00, SN, SN, SN, SN)
+
+line:4  entry:0 guess:N not branch!
+entries[0] = (00, SN, SN, SN, SN)
+entries[1] = (01, WN, SN, SN, SN)
+entries[2] = (00, SN, SN, SN, SN)
+entries[3] = (00, SN, SN, SN, SN)
+
+line:5  entry:1 guess:N fact:T
+entries[0] = (00, SN, SN, SN, SN)
+entries[1] = (11, WN, WN, SN, SN)
+entries[2] = (00, SN, SN, SN, SN)
+entries[3] = (00, SN, SN, SN, SN)
+
+line:3  entry:3 guess:N fact:N
+entries[0] = (00, SN, SN, SN, SN)
+entries[1] = (11, WN, WN, SN, SN)
+entries[2] = (00, SN, SN, SN, SN)
+entries[3] = (00, SN, SN, SN, SN)
+
+line:4  entry:0 guess:N not branch!
+entries[0] = (00, SN, SN, SN, SN)
+entries[1] = (11, WN, WN, SN, SN)
+entries[2] = (00, SN, SN, SN, SN)
+entries[3] = (00, SN, SN, SN, SN)
+
+line:5  entry:1 guess:N fact:T
+entries[0] = (00, SN, SN, SN, SN)
+entries[1] = (11, WN, WN, SN, WN)
+entries[2] = (00, SN, SN, SN, SN)
+entries[3] = (00, SN, SN, SN, SN)
+
+line:3  entry:3 guess:N fact:N
+entries[0] = (00, SN, SN, SN, SN)
+entries[1] = (11, WN, WN, SN, WN)
+entries[2] = (00, SN, SN, SN, SN)
+entries[3] = (00, SN, SN, SN, SN)
+
+line:4  entry:0 guess:N not branch!
+entries[0] = (00, SN, SN, SN, SN)
+entries[1] = (11, WN, WN, SN, WN)
+entries[2] = (00, SN, SN, SN, SN)
+entries[3] = (00, SN, SN, SN, SN)
+
+line:5  entry:1 guess:N fact:T
+entries[0] = (00, SN, SN, SN, SN)
+entries[1] = (11, WN, WN, SN, WT)
+entries[2] = (00, SN, SN, SN, SN)
+entries[3] = (00, SN, SN, SN, SN)
+
+line:3  entry:3 guess:N fact:T
+entries[0] = (00, SN, SN, SN, SN)
+entries[1] = (11, WN, WN, SN, WT)
+entries[2] = (00, SN, SN, SN, SN)
+entries[3] = (01, WN, SN, SN, SN)
+
+line:6  entry:2 guess:N not branch!
+entries[0] = (00, SN, SN, SN, SN)
+entries[1] = (11, WN, WN, SN, WT)
+entries[2] = (00, SN, SN, SN, SN)
+entries[3] = (01, WN, SN, SN, SN)
